@@ -192,35 +192,35 @@ class Email extends AbstractClass
 
             if (version_compare($utilsHelper->getMagentoVersion(), '2.2.8', '>=')) {
                 // >= M2.3: ZF1 removed in M2.3
-                $text = new \Laminas\Mime\Part(strip_tags($this->replaceVariables($this->getDestination()->getEmailBody(), implode("\n\n", $bodyFiles))));
-                $text->type = \Laminas\Mime\Mime::TYPE_TEXT;
+                $text = new \Zend\Mime\Part(strip_tags($this->replaceVariables($this->getDestination()->getEmailBody(), implode("\n\n", $bodyFiles))));
+                $text->type = \Zend\Mime\Mime::TYPE_TEXT;
                 $text->charset = 'utf-8';
 
                 $htmlText = $this->replaceVariables($this->getDestination()->getEmailBody(), implode("\n\n", $bodyFiles));
                 if (strstr($htmlText, '<') === false) {
                     $htmlText = nl2br($htmlText);
                 }
-                $html = new \Laminas\Mime\Part($htmlText);
-                $html->type = \Laminas\Mime\Mime::TYPE_HTML;
+                $html = new \Zend\Mime\Part($htmlText);
+                $html->type = \Zend\Mime\Mime::TYPE_HTML;
                 $html->charset = 'utf-8';
 
-                $content = new \Laminas\Mime\Message();
+                $content = new \Zend\Mime\Message();
                 $content->setParts([$text, $html]);
-                $contentPart = new \Laminas\Mime\Part($content->generateMessage());
+                $contentPart = new \Zend\Mime\Part($content->generateMessage());
                 $contentPart->type = 'multipart/alternative;' . "\r\n" . ' boundary="' . $content->getMime()->boundary() . '"';
 
                 $messageParts = [$contentPart];
                 foreach ($fileArray as $filename => $data) {
                     if ($this->getDestination()->getEmailAttachFiles()) {
-                        $attachment = new \Laminas\Mime\Part($data);
+                        $attachment = new \Zend\Mime\Part($data);
                         $attachment->filename = $filename;
-                        $attachment->disposition = \Laminas\Mime\Mime::DISPOSITION_ATTACHMENT;
-                        $attachment->encoding = \Laminas\Mime\Mime::ENCODING_BASE64;
+                        $attachment->disposition = \Zend\Mime\Mime::DISPOSITION_ATTACHMENT;
+                        $attachment->encoding = \Zend\Mime\Mime::ENCODING_BASE64;
                         array_push($messageParts, $attachment);
                     }
                 }
 
-                $mimeMessage = new \Laminas\Mime\Message();
+                $mimeMessage = new \Zend\Mime\Message();
                 $mimeMessage->setParts($messageParts);
                 $mail->setBody($mimeMessage);
             } else {
